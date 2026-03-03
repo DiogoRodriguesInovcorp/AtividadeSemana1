@@ -1,5 +1,6 @@
 <x-layout>
     <form action="/login" method="POST">
+        <input type="hidden" name="role" value="{{ request('role') }}">
         @csrf
 
         <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4 mx-auto">

@@ -19,13 +19,14 @@ Route::get('/autores', [LivroController::class, 'autores']);
 Route::get('/editoras', [LivroController::class, 'editoras']);
 Route::get('/autores/{autor}', [LivroController::class, 'showautores'])->name('autores.show');
 Route::get('/editoras/{editora}', [LivroController::class, 'showeditoras'])->name('editoras.show');
+Route::get('/livros/exportar', function () {
+    return Excel::download(new LivrosExport, 'livros.xlsx');
+})->name('livros.exportar');
 
 Route::get('/livros/{livro}', [LivroController::class, 'show'])->name('livros.show');
 Route::middleware(['auth', 'verified'])->group(function () {
 
-    Route::get('/livros/exportar', function () {
-        return Excel::download(new LivrosExport, 'livros.xlsx');
-    })->name('livros.exportar');
+
 
     Route::get('/criar', [LivroController::class, 'criar']);
     Route::middleware('can:Admin_ver')->group(function () {
@@ -43,6 +44,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('logout', [LivroController::class, 'destroy'])->name('destroy');
 });
 
-Route::middleware(['auth', 'role:bibliotecario'])->group(function () {
-    Route::get('/criar', [LoginController::class, 'bibliotecarioLogin'];
+Route::middleware(['auth', 'verified', 'role:bibliotecario'])->group(function () {
+    Route::get('/criar', function () {
+        return view('admin.criar');
+    });
 });

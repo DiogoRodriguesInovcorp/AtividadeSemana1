@@ -35,6 +35,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'Logo_editora',
         'Editora_id',
         'Autor_id',
+        'role',
     ];
 
     /**

@@ -9,6 +9,7 @@ use App\Actions\Fortify\UpdateUserProfileInformation;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\ServiceProvider;
@@ -28,11 +29,13 @@ class FortifyServiceProvider extends ServiceProvider
         $this->app->instance(LoginResponse::class, new class implements LoginResponse {
             public function toResponse($request)
             {
-                if (auth()->user()->role === 'bibliotecario') {
-                    return redirect('/criar');
+                $user = auth()->user();
+
+                if (!$user->hasVerifiedEmail()) {
+                    return redirect('/email/verify');
                 }
 
-                return redirect('/index');
+                return $user->role === 'bibliotecario' ? redirect('/criar') : redirect('/index');
             }
         });
 
@@ -55,7 +58,20 @@ class FortifyServiceProvider extends ServiceProvider
         });
 
         Fortify::registerView(function () {
-            return view('auth.registar');
+            $role = request()->query('role', 'cidadao');
+            return view('auth.registar', compact('role'));
+        });
+
+        Fortify::authenticateUsing(function (Request $request) {
+            $user = \App\Models\User::where('email', $request->email)
+                ->where('role', $request->role)
+                ->first();
+
+            if ($user && Hash::check($request->password, $user->password)) {
+                return $user;
+            }
+
+            return null;
         });
 
         Fortify::createUsersUsing(CreateNewUser::class);
