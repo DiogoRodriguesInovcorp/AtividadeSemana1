@@ -3,6 +3,7 @@ use App\Exports\LivrosExport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\LivroController;
+use App\Http\Controllers\LoginController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/index', [LivroController::class, 'index']);
@@ -40,4 +41,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     Route::delete('logout', [LivroController::class, 'destroy'])->name('destroy');
+});
+
+Route::middleware(['auth', 'role:bibliotecario'])->group(function () {
+    Route::get('/criar', [LoginController::class, 'bibliotecarioLogin'];
 });

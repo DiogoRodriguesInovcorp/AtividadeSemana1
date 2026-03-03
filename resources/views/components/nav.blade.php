@@ -27,8 +27,8 @@
     </div>
     <div class="navbar-end space-x-2">
         @guest
-            <a class="btn btn-warning" href="/register">Registar</a>
-            <a class="btn btn-success" href="/login">Entrar</a>
+            <a class="btn btn-warning" href="/escolher-registo">Registar</a>
+            <a class="btn btn-success" href="/escolher-login">Entrar</a>
         @endguest
 
         @auth

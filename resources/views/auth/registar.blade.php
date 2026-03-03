@@ -1,5 +1,7 @@
 <x-layout>
     <form action="/register" method="POST">
+        <input type="hidden" name="role" value="{{ request('role') }}">
+
         @csrf
 
         @if ($errors->any())
