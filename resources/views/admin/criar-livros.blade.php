@@ -45,7 +45,12 @@
             <div id="autorTags" class="flex flex-wrap gap-2 mt-3"></div>
 
             <label class="label">Bibliografia</label>
-            <input class="input text-white" name="Bibliografia" placeholder="Coloca a bibliografia do livro"/>
+            <textarea
+                name="Bibliografia"
+                rows="6"
+                class="textarea textarea-bordered w-full text-white"
+                placeholder="Coloca a bibliografia do livro"
+            ></textarea>
 
             <label class="label">Imagem da Capa</label>
             <input class="file-input file-input-bordered w-full text-white"

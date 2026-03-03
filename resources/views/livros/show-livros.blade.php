@@ -45,13 +45,6 @@
         </div>
 
     </div>
-
-                <button class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">
-                    Apagar
-                </button>
-            </form>
-        @endif
-    @endauth
     <div class="mt-8">
         <a href="/livros"
            class="px-6 py-3 bg-orange-400 text-white rounded-xl shadow hover:bg-orange-500 transition">
@@ -62,19 +55,20 @@
            class="px-6 py-3 bg-orange-500 text-white rounded-xl shadow hover:bg-orange-400 transition">
             Ver Autores
         </a>
+        ­
+        @auth
+            @if(auth()->user()->isAdmin())
+                <form action="{{ route('livros.destroy', $livro) }}" method="POST"
+                      class="inline-block"
+                      onsubmit="return confirm('Tens a certeza que queres retirar este livro?')">
+                    @csrf
+                    @method('DELETE')
+
+                    <button class="bg-red-600 hover:bg-red-800 text-white px-6 py-3  rounded-xl shadow transition">
+                        Retirar Livro
+                    </button>
+                </form>
+            @endif
+        @endauth
     </div>
-    @auth
-        @if(auth()->user()->isAdmin())
-            <form action="{{ route('livros.destroy', $livro) }}" method="POST"
-                  onsubmit="return confirm('Tens a certeza que queres apagar este livro?')">
-                @csrf
-                @method('DELETE')
-
-                <button class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">
-                    Apagar
-                </button>
-            </form>
-        @endif
-    @endauth
-
 </x-layout>

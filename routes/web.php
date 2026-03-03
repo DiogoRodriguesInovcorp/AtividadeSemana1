@@ -6,6 +6,13 @@ use App\Http\Controllers\LivroController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/index', [LivroController::class, 'index']);
+Route::get('/escolher-login', function () {
+    return view('auth.escolher-login');
+});
+
+Route::get('/escolher-registo', function () {
+    return view('auth.escolher-registo');
+});
 Route::get('/livros', [LivroController::class, 'livros']);
 Route::get('/autores', [LivroController::class, 'autores']);
 Route::get('/editoras', [LivroController::class, 'editoras']);
