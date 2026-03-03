@@ -3,7 +3,6 @@ use App\Exports\LivrosExport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\LivroController;
-use App\Http\Controllers\LoginController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/index', [LivroController::class, 'index']);
@@ -30,6 +29,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/criar', [LivroController::class, 'criar']);
     Route::middleware('can:Admin_ver')->group(function () {
+        Route::get('/criar-admin', [AdminController::class, 'criarAdmin'])->name('admin.criar-admin');
+        Route::post('/criar-admin', [AdminController::class, 'storeAdmin'])->name('admin.store-admin');
         Route::get('/criar-livros', [AdminController::class, 'criarlivros']);
         Route::post('/criar-livros', [AdminController::class, 'storelivros']);
         Route::get('/criar-autores', [AdminController::class, 'criarautores']);

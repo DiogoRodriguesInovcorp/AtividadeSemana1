@@ -8,7 +8,10 @@ use App\Http\Requests\LivroRequest;
 use App\Models\Autores;
 use App\Models\Editoras;
 use App\Models\Livro;
+use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
@@ -82,5 +85,28 @@ class AdminController extends Controller
         $livro->delete();
 
         return redirect()->back()->with('success', 'Livro eliminado com sucesso.');
+    }
+
+    public function criarAdmin()
+    {
+        return view('admin.criar-admin');
+    }
+
+    public function storeAdmin(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => 'bibliotecario',
+        ]);
+
+        return redirect()->route('admin.criar-admin')->with('success', 'Novo Admin criado com sucesso!');
     }
 }

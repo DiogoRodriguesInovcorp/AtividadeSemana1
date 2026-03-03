@@ -33,6 +33,10 @@
 
         @auth
             @can('Admin_ver')
+                    <a href="/criar-admin"
+                       class="btn btn-primary">
+                        Criar Novo Admin
+                    </a>
             <a class="btn btn-soft-primary" href="/criar">Admin</a>
             @endcan
             <form method="POST" action="{{ route('logout') }}">
