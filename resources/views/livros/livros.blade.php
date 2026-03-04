@@ -52,6 +52,11 @@
                 <td class="px-6 py-4 text-lg">{{ optional($livro->editoras)->Nome_editora ?? '-' }}</td>
                 <td class="px-6 py-4 text-lg">€ {{ $livro->Preco }}</td>
             </tr>
+            @if($livro->estaDisponivel())
+                <span class="text-green-600 font-bold">Disponível</span>
+            @else
+                <span class="text-red-600 font-bold">Indisponível</span>
+            @endif
         @endforeach
         </tbody>
     </table>

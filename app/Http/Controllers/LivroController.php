@@ -78,7 +78,12 @@ class LivroController extends Controller
     {
         $livro->load('autores', 'editoras');
 
-        return view('livros.show-livros', compact('livro'));
+        $historico = $livro->requisicoes()
+            ->with('user')
+            ->latest()
+            ->get();
+
+        return view('livros.show-livros', compact('livro', 'historico'));
     }
 
     public function showautores(Autores $autor)

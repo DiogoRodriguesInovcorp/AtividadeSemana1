@@ -1,5 +1,6 @@
 <?php
 use App\Exports\LivrosExport;
+use App\Http\Controllers\RequisicaoController;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\LivroController;
@@ -49,4 +50,25 @@ Route::middleware(['auth', 'verified', 'role:bibliotecario'])->group(function ()
     Route::get('/criar', function () {
         return view('admin.criar');
     });
+});
+
+Route::middleware(['auth', 'verified'])->group(function() {
+
+    // Menu de Requisições
+    Route::get('/requisicoes', [RequisicaoController::class, 'index'])
+        ->name('requisicoes.index');
+
+    // Todas as requisições (só admin/bibliotecario)
+    Route::get('/requisicoes-todas',
+        [RequisicaoController::class, 'todas']
+    )->middleware('role:bibliotecario')
+        ->name('admin.requisicoes-todas');
+
+    Route::post('/livros/{livro}/requisitar', [RequisicaoController::class, 'store'])
+        ->name('requisicoes.store');
+
+    // Confirmar recepção (só admins)
+    Route::post('/requisicoes/{requisicao}/confirmar', [RequisicaoController::class, 'confirmar'])
+        ->middleware('role:admin')
+        ->name('requisicoes.confirmar');
 });

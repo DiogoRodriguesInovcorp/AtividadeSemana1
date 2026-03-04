@@ -72,7 +72,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function isAdmin(): bool
     {
-        return $this->id === 1;
+        return $this->role === 'bibliotecario';
     }
 
     public function autores()
@@ -83,6 +83,17 @@ class User extends Authenticatable implements MustVerifyEmail
     public function editoras()
     {
         return $this->hasMany(Editoras::class);
+    }
+
+    public function requisicoes()
+    {
+        return $this->hasMany(Requisicao::class);
+    }
+
+    public function requisicoesAtivas()
+    {
+        return $this->requisicoes()
+            ->where('estado', 'ativa');
     }
 }
 

@@ -11,6 +11,7 @@
                 <li><a>Livros</a></li>
                 <li><a>Autores</a></li>
                 <li><a>Editoras</a></li>
+                <li><a>As Minhas Requisições</a></li>
             </ul>
         </div>
         <a href="/index" class="btn btn-ghost text-xl">Biblioteca - Menu</a>
@@ -23,6 +24,7 @@
             <li><a class=" bg-orange-500 text-white rounded-xl shadow hover:bg-orange-400 transition" href="/livros">Livros</a></li>
             <li><a class=" bg-orange-500 text-white rounded-xl shadow hover:bg-orange-400 transition" href="/autores">Autores</a></li>
             <li><a class=" bg-orange-500 text-white rounded-xl shadow hover:bg-orange-400 transition" href="/editoras">Editoras</a></li>
+            <li><a class=" bg-orange-500 text-white rounded-xl shadow hover:bg-orange-400 transition" href="/requisicoes">As Minhas Requisições</a></li>
         </ul>
     </div>
     <div class="navbar-end space-x-2">
@@ -33,11 +35,12 @@
 
         @auth
             @can('Admin_ver')
+                    <a href="/requisicoes-todas" class="btn btn-ghost">Todas as Requisições</a>
                     <a href="/criar-admin"
-                       class="btn btn-primary">
+                       class="btn btn-ghost">
                         Criar Novo Admin
                     </a>
-            <a class="btn btn-soft-primary" href="/criar">Admin</a>
+            <a class="btn btn-ghost" href="/criar">Admin</a>
             @endcan
             <form method="POST" action="{{ route('logout') }}">
                 @csrf

@@ -25,7 +25,7 @@ class AppServiceProvider extends ServiceProvider
     {
         Gate::define('Admin_ver', function (User $user) {
 
-            return $user->id == 1;
+            return $user->role === 'bibliotecario';
         });
     }
 }

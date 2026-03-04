@@ -70,5 +70,48 @@
                 </form>
             @endif
         @endauth
+            @if($livro->estaDisponivel())
+                <form action="{{ route('requisicoes.store', $livro) }}" method="POST"
+                      class="inline-block">
+                    @csrf
+                    <button type="submit" class="px-6 py-3 bg-green-700 text-white rounded-xl shadow hover:bg-green-800">
+                        Requisitar Livro
+                    </button>
+
+                </form>
+                @if(session('error'))
+                <div class="text-red-500 font-bold mt-6">
+                    {{ session('error') }}
+                </div>
+                @endif
+            @else
+                <span class="bg-red-600 text-white px-6 py-3 cursor-not-allowed rounded-xl shadow transition">Livro indisponível</span>
+            @endif
+    </div>
+
+    <div class="overflow-x-auto">
+
+        <h3 class="text-3xl py-8 font-bold mb-3">Histórico de Requisições do Livro</h3>
+
+        <table class="table-auto w-full bg-gray-800 text-white rounded-lg overflow-hidden">
+            <thead class="bg-gray-700 text-white uppercase text-xs">
+                <tr>
+                    <th class="px-6 py-3">Código do Livro</th>
+                    <th class="px-6 py-3">Nome do Encarregue</th>
+                    <th class="px-6 py-3">Estado</th>
+                    <th class="px-6 py-3">Data da Requisição</th>
+                </tr>
+            </thead>
+            <tbody class="bg-gray-800 divide-y divide-gray-700">
+                @foreach($historico as $h)
+                    <tr>
+                        <td class="px-6 py-4">ID: {{ $h->codigo }}</td>
+                        <td class="px-6 py-4">{{ $h->user->name }}</td>
+                        <td class="px-6 py-4">{{ $h->estado }}</td>
+                        <td class="px-6 py-4">{{ $h->data_requisicao->format('d/m/Y') }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
     </div>
 </x-layout>
