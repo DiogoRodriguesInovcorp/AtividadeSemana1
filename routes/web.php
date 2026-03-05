@@ -5,6 +5,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\LivroController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PerfilController;
 
 Route::get('/index', [LivroController::class, 'index']);
 Route::get('/escolher-login', function () {
@@ -71,4 +72,24 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::post('/requisicoes/{requisicao}/confirmar', [RequisicaoController::class, 'confirmar'])
         ->middleware('role:admin')
         ->name('requisicoes.confirmar');
+
+    Route::get('/perfil', function () {
+        return view('auth.perfil');
+    })->name('auth.perfil');
+});
+
+Route::middleware(['auth', 'verified'])->group(function(){
+
+    Route::get('/perfil',[PerfilController::class,'index'])
+        ->name('perfil');
+
+    Route::post('/perfil/update',[PerfilController::class,'update'])
+        ->name('perfil.update');
+
+    Route::post('/perfil/password',[PerfilController::class,'updatepassword'])
+        ->name('perfil.password');
+
+    Route::post('/perfil/foto',[PerfilController::class,'updatefoto'])
+        ->name('perfil.foto');
+
 });

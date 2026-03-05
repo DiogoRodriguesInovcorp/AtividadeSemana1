@@ -85,7 +85,7 @@
                 </div>
                 @endif
             @else
-                <span class="bg-red-600 text-white px-6 py-3 cursor-not-allowed rounded-xl shadow transition">Livro indisponível</span>
+                <span class="bg-gray-600 text-white px-6 py-3 cursor-not-allowed rounded-xl shadow transition">Livro indisponível</span>
             @endif
     </div>
 

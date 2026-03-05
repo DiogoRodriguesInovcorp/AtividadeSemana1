@@ -24,7 +24,6 @@
             <li><a class=" bg-orange-500 text-white rounded-xl shadow hover:bg-orange-400 transition" href="/livros">Livros</a></li>
             <li><a class=" bg-orange-500 text-white rounded-xl shadow hover:bg-orange-400 transition" href="/autores">Autores</a></li>
             <li><a class=" bg-orange-500 text-white rounded-xl shadow hover:bg-orange-400 transition" href="/editoras">Editoras</a></li>
-            <li><a class=" bg-orange-500 text-white rounded-xl shadow hover:bg-orange-400 transition" href="/requisicoes">As Minhas Requisições</a></li>
         </ul>
     </div>
     <div class="navbar-end space-x-2">
@@ -33,20 +32,78 @@
             <a class="btn btn-success" href="/escolher-login">Entrar</a>
         @endguest
 
-        @auth
-            @can('Admin_ver')
-                    <a href="/requisicoes-todas" class="btn btn-ghost">Todas as Requisições</a>
-                    <a href="/criar-admin"
-                       class="btn btn-ghost">
-                        Criar Novo Admin
-                    </a>
-            <a class="btn btn-ghost" href="/criar">Admin</a>
-            @endcan
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
+            <div class="navbar-end">
 
-                <button class="btn btn-ghost">Sair</button>
-            </form>
-        @endauth
+                @guest
+                    <a class="btn btn-warning" href="/escolher-registo">Registar</a>
+                    <a class="btn btn-success" href="/escolher-login">Entrar</a>
+                @endguest
+
+                @auth
+                    <div class="dropdown dropdown-end font-bold">
+
+                        <div tabindex="0" role="button" class="btn btn-ghost text-xl">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 class="h-6 w-6"
+                                 fill="none"
+                                 viewBox="0 0 24 24"
+                                 stroke="currentColor">
+
+                                <path stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                      stroke-width="2"
+                                      d="M4 6h16M4 12h16M4 18h16" />
+
+                            </svg>
+                        </div>
+
+                        <ul tabindex="0"
+                            class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-56 p-2 shadow">
+
+                            <li>
+                                <a href="/perfil">Perfil</a>
+                            </li>
+
+                            <li>
+                                <a href="/requisicoes">As Minhas Requisições</a>
+                            </li>
+
+                            @can('Admin_ver')
+
+                                <li>
+                                    <a href="/requisicoes-todas">
+                                        Todas as Requisições
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="/criar">
+                                        Admin
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="/criar-admin">
+                                        Criar Novo Admin
+                                    </a>
+                                </li>
+
+                            @endcan
+
+                            <li>
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button class="w-full text-left">
+                                        Sair
+                                    </button>
+                                </form>
+                            </li>
+
+                        </ul>
+
+                    </div>
+                @endauth
+
+            </div>
     </div>
 </div>
