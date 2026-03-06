@@ -20,7 +20,7 @@ class RequisicaoController extends Controller
         }
 
         if ($user->requisicoes()->where('estado','ativa')->count() >= 3) {
-            return back()->with('error', 'Já atingiu o número máximo de livros que pode registar.');
+            return back()->with('error', 'Já atingiu o número máximo de livros que pode requisitar.');
         }
 
         $livro->disponivel = false;

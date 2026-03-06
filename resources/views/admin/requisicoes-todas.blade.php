@@ -17,7 +17,7 @@
     <div class="flex gap-4 mb-4">
         <input type="text" id="filter-livro" placeholder="Filtrar por livro..."
                class="px-3 py-2 rounded text-white bg-gray-600">
-        <input type="text" id="filter-usuario" placeholder="Filtrar por usuário..."
+        <input type="text" id="filter-usuario" placeholder="Filtrar por utilizador..."
                class="px-3 py-2 rounded text-white bg-gray-600">
         <select id="filter-estado" class="px-3 py-2 rounded text-white bg-gray-600">
             <option value="">Todos os estados</option>
