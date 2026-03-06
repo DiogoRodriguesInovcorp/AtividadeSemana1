@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\RequisicaoCriada;
 use Illuminate\Http\Request;
 use App\Models\Livro;
 use App\Models\Requisicao;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
 
 class RequisicaoController extends Controller
 {
@@ -21,7 +23,10 @@ class RequisicaoController extends Controller
             return back()->with('error', 'Já atingiu o número máximo de livros que pode registar.');
         }
 
-        Requisicao::create([
+        $livro->disponivel = false;
+        $livro->save();
+
+        $requisicao = Requisicao::create([
             'user_id' => $user->id,
             'livro_id' => $livro->id,
             'estado' => 'ativa',
@@ -29,6 +34,9 @@ class RequisicaoController extends Controller
             'data_prevista_entrega' => now()->addDays(5),
             'codigo' => (int) Requisicao::max('codigo') + 1,
         ]);
+
+        Mail::to($user->email)->send(new RequisicaoCriada($requisicao));
+        Mail::to('rodriguesdidi25@gmail.com')->send(new RequisicaoCriada($requisicao));
 
         return redirect()->back()->with('success', 'Livro requisitado com sucesso!');
     }
@@ -69,5 +77,21 @@ class RequisicaoController extends Controller
         ];
 
         return view('admin.requisicoes-todas', compact('requisicoes', 'indicadores'));
+    }
+
+    public function devolver($id)
+    {
+        $req = Requisicao::findOrFail($id);
+
+        $req->estado = 'devolvido';
+        $req->data_entrega_real = now();
+        $req->dias_decorridos = $req->data_requisicao->diffInDays(now());
+        $req->save();
+
+        $livro = Livro::find($req->livro_id);
+        $livro->disponivel = true;
+        $livro->save();
+
+        return back()->with('success','Livro devolvido com sucesso');
     }
 }

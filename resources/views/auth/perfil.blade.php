@@ -12,17 +12,16 @@
 
                 <div>
 
-                    @if($user->foto)
-                        <img src="{{ asset('storage/'.$user->foto) }}"
-                             class="w-40 h-40 rounded-full object-cover">
-                    @else
-                        <div class="w-40 h-40 bg-gray-300 rounded-full"></div>
-                    @endif
-
-                    <form action="{{ route('perfil.foto') }}" method="POST" enctype="multipart/form-data" class="mt-4">
+                    <form action="{{ route('perfil.foto') }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
-                        <input type="file" name="foto_user" class="file-input">
+                        <img
+                            id="preview"
+                            src="{{ $user->foto_user ? asset('storage/'.$user->foto_user) : '' }}"
+                            class="w-40 h-40 rounded-full object-cover bg-gray-300"
+                        >
+
+                        <input type="file" class="file-input file-input-bordered w-full text-white mt-3" name="foto_user" onchange="previewFoto(event)">
 
                         <button class="btn btn-primary mt-2">
                             Atualizar Foto
@@ -80,6 +79,8 @@
 
             </div>
 
+        </div>
+
             <h2 class="text-2xl font-bold mb-4">O Meu Histórico de Requisições</h2>
 
         <table class="table-auto w-full bg-gray-800 text-white rounded-lg overflow-hidden">
@@ -109,5 +110,13 @@
         </table>
 
     </div>
-
+        <script>
+            function previewFoto(event) {
+                const reader = new FileReader();
+                reader.onload = function(){
+                    document.getElementById('preview').src = reader.result;
+                }
+                reader.readAsDataURL(event.target.files[0]);
+            }
+        </script>
 </x-layout>

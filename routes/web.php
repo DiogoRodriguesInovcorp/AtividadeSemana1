@@ -76,6 +76,8 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::get('/perfil', function () {
         return view('auth.perfil');
     })->name('auth.perfil');
+
+    Route::post('/requisicoes/{id}/devolver', [RequisicaoController::class,'devolver']);
 });
 
 Route::middleware(['auth', 'verified'])->group(function(){

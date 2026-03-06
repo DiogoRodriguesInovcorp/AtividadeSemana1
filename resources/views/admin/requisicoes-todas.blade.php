@@ -19,7 +19,8 @@
             <tr>
                 <th class="px-6 py-3">Código do Livro</th>
                 <th class="px-6 py-3">Nome do livro</th>
-                <th class="px-6 py-3">Nome do Encarregue</th>
+                <th class="px-6 py-3">Foto do Responsável</th>
+                <th class="px-6 py-3">Nome do Responsável</th>
                 <th class="px-6 py-3">Estado</th>
                 <th class="px-6 py-3">Data da Requisição</th>
                 <th class="px-6 py-3">Data da Entrega Prevista</th>
@@ -29,12 +30,18 @@
             <tbody class="bg-gray-800 divide-y divide-gray-700">
                 @foreach($requisicoes as $r)
                     <tr>
-                        <td class="px-6 py-4">ID: {{ $r->codigo }}</td>
-                        <td class="px-6 py-4">{{ $r->livros->Nome_livro }}</td>
-                        <td class="px-6 py-4">{{ $r->user->name }}</td>
-                        <td class="px-6 py-4">{{ $r->estado }}</td>
-                        <td class="px-6 py-4">{{ $r->data_requisicao->format('d/m/Y') }}</td>
-                        <td class="px-6 py-4">{{ $r->data_prevista_entrega->format('d/m/Y') }}</td>
+                        <td class="px-2 py-2">ID: {{ $r->codigo }}</td>
+                        <td class="px-2 py-2">{{ $r->livros->Nome_livro }}</td>
+                        <td class="px-2 py-2">
+                            <img
+                                src="{{ $r->user->foto_user ? asset('storage/'.$r->user->foto_user) : '' }}"
+                                class="w-8 h-8 rounded-full object-cover"
+                            >
+                        </td>
+                        <td class="px-2 py-2">{{ $r->user->name }}</td>
+                        <td class="px-2 py-2">{{ $r->estado }}</td>
+                        <td class="px-2 py-2">{{ $r->data_requisicao->format('d/m/Y') }}</td>
+                        <td class="px-2 py-2">{{ $r->data_prevista_entrega->format('d/m/Y') }}</td>
                     </tr>
                 @endforeach
             </tbody>

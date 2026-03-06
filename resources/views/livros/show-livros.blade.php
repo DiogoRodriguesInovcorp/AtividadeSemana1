@@ -96,8 +96,9 @@
         <table class="table-auto w-full bg-gray-800 text-white rounded-lg overflow-hidden">
             <thead class="bg-gray-700 text-white uppercase text-xs">
                 <tr>
+                    <th class="px-6 py-3">Foto do Responsável</th>
                     <th class="px-6 py-3">Código do Livro</th>
-                    <th class="px-6 py-3">Nome do Encarregue</th>
+                    <th class="px-6 py-3">Nome do Responsável</th>
                     <th class="px-6 py-3">Estado</th>
                     <th class="px-6 py-3">Data da Requisição</th>
                 </tr>
@@ -105,6 +106,12 @@
             <tbody class="bg-gray-800 divide-y divide-gray-700">
                 @foreach($historico as $h)
                     <tr>
+                        <td class="px-6 py-4">
+                            <img
+                                src="{{ $h->user->foto_user ? asset('storage/'.$h->user->foto_user) : asset('images/default-user.png') }}"
+                                class="w-10 h-10 rounded-full object-cover"
+                            >
+                        </td>
                         <td class="px-6 py-4">ID: {{ $h->codigo }}</td>
                         <td class="px-6 py-4">{{ $h->user->name }}</td>
                         <td class="px-6 py-4">{{ $h->estado }}</td>
