@@ -80,7 +80,7 @@
 
             </div>
 
-            <h2 class="text-2xl font-bold mb-4">Histórico de Requisições</h2>
+            <h2 class="text-2xl font-bold mb-4">O Meu Histórico de Requisições</h2>
 
         <table class="table-auto w-full bg-gray-800 text-white rounded-lg overflow-hidden">
 
