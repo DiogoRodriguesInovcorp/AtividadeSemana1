@@ -80,6 +80,7 @@ class LivroController extends Controller
 
         $historico = $livro->requisicoes()
             ->with('user')
+            ->wherehas('user')
             ->latest()
             ->get();
 

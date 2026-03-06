@@ -33,6 +33,7 @@
             <th class="px-10 py-6 text-lg font-bold w-48">Autores</th>
             <th class="px-10 py-6 text-lg font-bold w-48">Editora</th>
             <th class="px-6 py-6 text-lg font-bold w-32">Preço</th>
+            <th class="px-6 py-6 text-lg font-bold w-32">Estado</th>
         </tr>
         </thead>
         <tbody>
@@ -50,13 +51,16 @@
                     @endforeach
                 </td>
                 <td class="px-6 py-4 text-lg">{{ optional($livro->editoras)->Nome_editora ?? '-' }}</td>
-                <td class="px-6 py-4 text-lg">€ {{ $livro->Preco }}</td>
+                <td class="px-6 py-4 text-lg">{{ $livro->Preco }}€</td>
+                <td class="px-6 py-4 text-lg">
+                    @if($livro->estaDisponivel())
+                        <span class="text-green-600 font-bold">Disponível</span>
+                    @else
+                        <span class="text-red-600 font-bold">Indisponível</span>
+                   @endif
+                </td>
             </tr>
-            @if($livro->estaDisponivel())
-                <span class="text-green-600 font-bold">Disponível</span>
-            @else
-                <span class="text-red-600 font-bold">Indisponível</span>
-            @endif
+
         @endforeach
         </tbody>
     </table>

@@ -48,6 +48,7 @@ class RequisicaoController extends Controller
         $requisicoes = $user->requisicoes()
             ->with('livros')
             ->latest()
+            ->wherehas('user')
             ->get();
 
         return view('livros.requisicoes', compact('requisicoes'));
@@ -68,6 +69,7 @@ class RequisicaoController extends Controller
     {
         $requisicoes = Requisicao::with('livros', 'user')
             ->latest()
+            ->wherehas('user')
             ->get();
 
         $indicadores = [
