@@ -7,8 +7,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Livro extends Model
 {
-    protected $guarded = [];
-
     protected $attributes = [
 
     ];
@@ -19,6 +17,7 @@ class Livro extends Model
         'Editora_id',
         'Autor_id',
         'Bibliografia',
+        'disponivel',
         'Imagem_da_capa',
         'Preco'
     ];

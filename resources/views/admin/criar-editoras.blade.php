@@ -28,6 +28,5 @@
             <button class="btn btn-neutral mt-4">Colocar Editora</button>
         </fieldset>
     </form>
-
 </x-layout>
 

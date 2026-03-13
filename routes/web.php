@@ -6,6 +6,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\LivroController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PerfilController;
+use App\Http\Controllers\GoogleBooksController;
 
 Route::get('/index', [LivroController::class, 'index']);
 Route::get('/escolher-login', function () {
@@ -58,6 +59,12 @@ Route::middleware(['auth', 'verified'])->group(function() {
     // Menu de Requisições
     Route::get('/requisicoes', [RequisicaoController::class, 'index'])
         ->name('requisicoes.index');
+
+    Route::get('/admin/pesquisar', [GoogleBooksController::class, 'index'])->name('admin.pesquisar');
+
+    Route::get('/admin/resultados', [GoogleBooksController::class, 'pesquisar'])->name('admin.resultados');
+
+    Route::post('/admin/guardar', [GoogleBooksController::class, 'guardar'])->name('admin.guardar');
 
     // Todas as requisições (só admin/bibliotecario)
     Route::get('/requisicoes-todas',

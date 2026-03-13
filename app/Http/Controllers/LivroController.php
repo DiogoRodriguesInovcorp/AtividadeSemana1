@@ -36,8 +36,13 @@ class LivroController extends Controller
         $livros = $query->paginate(3)->withQueryString();
 
         $editoras = Editoras::all();
+        $autores = Autores::all();
 
-        return view('livros.livros', compact('livros', 'editoras'));
+        return view('livros.livros', [
+            'livros' => $livros,
+            'editoras' => $editoras,
+            'autores' => $autores
+        ]);
     }
     public function autores(Request $request)
     {

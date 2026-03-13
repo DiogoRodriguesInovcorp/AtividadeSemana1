@@ -81,6 +81,12 @@
                                     </a>
                                 </li>
 
+                                <li>
+                                    <a href="/admin/pesquisar">
+                                        Pesquisar livros
+                                    </a>
+                                </li>
+
                             @endcan
 
                             <li>

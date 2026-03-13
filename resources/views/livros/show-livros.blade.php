@@ -4,8 +4,10 @@
 
         <div class="w-1/3">
             <img
-                src="{{ asset('storage/' . $livro->Imagem_da_capa) }}"
-                class="rounded-2xl shadow-2xl"
+                src="{{ Str::startsWith($livro->Imagem_da_capa, 'http')
+                ? $livro->Imagem_da_capa
+                : asset('storage/'.$livro->Imagem_da_capa) }}"
+                class="rounded-2xl shadow-2xl w-48"
             />
         </div>
 
@@ -37,7 +39,7 @@
             </div>
 
             <div class="mt-6 text-2xl font-bold text-green-400">
-                € {{ $livro->Preco }}
+                {{ $livro->Preco }} €
             </div>
 
 

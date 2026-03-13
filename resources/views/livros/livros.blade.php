@@ -41,7 +41,7 @@
             <tr onclick="window.location='{{ route('livros.show', $livro->id) }}'"
                 class="border-b border-gray-600 cursor-pointer hover:bg-gray-700 transition">
                 <td class="px-5 py-10">
-                    <img src="{{ asset('storage/' . $livro->Imagem_da_capa) }}"
+                    <img src="{{ $livro->Imagem_da_capa }}"
                          class="w-full h-auto object-cover rounded-lg">
                 </td>
                 <td class="px-6 py-4 text-lg">{{ $livro->Nome_livro }}</td>
