@@ -69,6 +69,7 @@
                     <button class="bg-red-600 hover:bg-red-800 text-white px-6 py-3  rounded-xl shadow transition">
                         Retirar Livro
                     </button>
+
                 </form>
             @endif
         @endauth
@@ -86,11 +87,116 @@
                     {{ session('error') }}
                 </div>
                 @endif
-            @else
-                <span class="bg-gray-600 text-white px-6 py-3 cursor-not-allowed rounded-xl shadow transition">Livro indisponível</span>
+            @else(!$livro->disponivel)
+                <div class="flex items-center gap-4 mt-4">
+                <span class="bg-gray-600 text-white px-6 py-3 cursor-not-allowed rounded-xl shadow transition">
+                    Livro indisponível
+                </span>
+                    @php
+                        $jaNotificado = \App\Models\AlertasDisponibilidade::where('user_id', auth()->id())
+                                        ->where('livro_id', $livro->id)
+                                        ->exists();
+                    @endphp
+
+                    <form method="POST" action="{{ route('alerta.disponibilidade.store') }}" onsubmit="return confirmarNotificacao()">
+                        @csrf
+                        <input type="hidden" name="livro_id" value="{{ $livro->id }}">
+
+                        <button type="submit"
+                                @if($jaNotificado) disabled @endif
+                                class="py-2 px-6 flex items-center justify-center rounded-xl
+                               @if($jaNotificado)
+                                   bg-gray-600 cursor-not-allowed
+                               @else
+                                   bg-green-800 hover:bg-yellow-400
+                               @endif
+                               text-white shadow-md transition duration-300">
+                            🔔 Notificar-me
+                        </button>
+                    </form>
+                    @if($jaNotificado)
+                        <p class="text-gray-300 mt-2 text-sm">Você já solicitou notificação para este livro.</p>
+                    @endif
+
+                    <script>
+                        function confirmarNotificacao() {
+                            alert('Obrigado! Você receberá um email quando o livro estiver disponível.');
+                            return true; // Continua com o envio do formulário
+                        }
+                    </script>
+                </div>
             @endif
     </div>
 
+    @if($livrosRelacionados->count())
+        <h2 class="text-3xl font-bold mt-12 mb-6">Livros Relacionados</h2>
+
+        <div class="relative">
+
+            <!-- Container scroll horizontal -->
+            <div id="relacionados-container" class="flex overflow-x-auto gap-4 scrollbar-hide px-6 py-4">
+                @foreach($livrosRelacionados as $rel)
+                    <div class="min-w-50 bg-gray-800 p-4 rounded-xl shadow shrink-0 hover:scale-105 transition cursor-pointer"
+                         onclick="window.location='{{ route('livros.show', $rel->id) }}'">
+                        <img src="{{ Str::startsWith($rel->Imagem_da_capa,'http') ? $rel->Imagem_da_capa : asset('storage/'.$rel->Imagem_da_capa) }}"
+                             class="w-full h-48 object-cover rounded-lg mb-2">
+                        <h3 class="text-lg font-bold text-orange-400">{{ $rel->Nome_livro }}</h3>
+                        <p class="text-gray-300 text-sm">
+                            @foreach($rel->autores as $autor)
+                                {{ $autor->Nome_autor }}@if(!$loop->last), @endif
+                            @endforeach
+                        </p>
+                        <p class="text-green-400 font-bold mt-1">{{ $rel->Preco }} €</p>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+
+        <script>
+            const container = document.getElementById('relacionados-container');
+            function scrollLeft() {
+                container.scrollBy({ left: -250, behavior: 'smooth' });
+            }
+            function scrollRight() {
+                container.scrollBy({ left: 250, behavior: 'smooth' });
+            }
+        </script>
+    @endif
+
+    <div>
+        <h2 class="text-3xl font-bold mb-6">Reviews</h2>
+        <div class="space-y-4">
+            @forelse($reviews as $review)
+                <div class="bg-gray-800 p-4 rounded-xl shadow transition">
+                    <div class="flex items-center gap-4 mb-2">
+                        <!-- Foto do usuário -->
+                        <img src="{{ $review->user?->foto_user ? asset('storage/'.$review->user->foto_user) : asset('images/default-user.png') }}"
+                             class="w-12 h-12 rounded-full object-cover">
+
+                        <!-- Nome e estrelas -->
+                        <div class="flex-1 flex flex-col">
+                            <p class="text-white font-semibold">{{ $review->user->name }}</p>
+                            <div class="flex gap-1 text-yellow-400">
+                                @for($i = 1; $i <= 5; $i++)
+                                    <span class="{{ $i <= $review->rating ? 'text-yellow-400' : 'text-gray-500' }}">&#9733;</span>
+                                @endfor
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Comentário -->
+                    <p class="text-gray-200 mt-2">{{ $review->comentario }}</p>
+
+                    <!-- Justificação (se recusado) -->
+                    @if($review->estado == 'recusado' && $review->justificacao)
+                        <p class="text-red-400 mt-2 font-medium">Justificação: {{ $review->justificacao }}</p>
+                    @endif
+                </div>
+            @empty
+                <p class="text-gray-400">Ainda não existem reviews para este livro.</p>
+            @endforelse
+        </div>
+    </div>
 
 
     <h3 class="text-3xl py-8 font-bold mb-3">Histórico de Requisições do Livro</h3>
@@ -159,4 +265,42 @@
             });
         }
     </script>
+
+    <div class="mt-8 flex justify-center items-center gap-3     ">
+        @if($historico->currentPage() > 1)
+            <a href="{{ $historico->url(1) }}" class="px-4 py-2 bg-orange-400 text-white rounded hover:bg-orange-500 transition">
+                &laquo; Primeira
+            </a>
+        @else
+            <span class="px-4 py-2 bg-gray-600 text-white rounded cursor-not-allowed">&laquo; Primeira</span>
+        @endif
+
+        @if($historico->onFirstPage())
+            <span class="px-4 py-2 bg-gray-600 text-white rounded cursor-not-allowed">Anterior</span>
+        @else
+            <a href="{{ $historico->previousPageUrl() }}" class="px-4 py-2 bg-orange-400 text-white rounded hover:bg-orange-500 transition">Anterior</a>
+        @endif
+
+        @foreach(range(1, $historico->lastPage()) as $page)
+            @if($page == $historico->currentPage())
+                <span class="px-4 py-2 bg-orange-600 text-white rounded">{{ $page }}</span>
+            @else
+                <a href="{{ $historico->url($page) }}" class="px-4 py-2 bg-orange-400 text-white rounded hover:bg-orange-500 transition">{{ $page }}</a>
+            @endif
+        @endforeach
+
+        @if($historico->hasMorePages())
+            <a href="{{ $historico->nextPageUrl() }}" class="px-4 py-2 bg-orange-400 text-white rounded hover:bg-orange-500 transition">Próximo</a>
+        @else
+            <span class="px-4 py-2 bg-gray-600 text-white rounded cursor-not-allowed">Próximo</span>
+        @endif
+
+        @if($historico->currentPage() < $historico->lastPage())
+            <a href="{{ $historico->url($historico->lastPage()) }}" class="px-4 py-2 bg-orange-400 text-white rounded hover:bg-orange-500 transition">
+                Última &raquo;
+            </a>
+        @else
+            <span class="px-4 py-2 bg-gray-600 text-white rounded cursor-not-allowed">Última &raquo;</span>
+        @endif
+    </div>
 </x-layout>

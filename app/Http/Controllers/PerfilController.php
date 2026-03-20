@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Requisicao;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -10,9 +11,14 @@ class PerfilController extends Controller
 {
     public function index()
     {
-        return view('auth.perfil', [
-            'user' => Auth::user()
-        ]);
+        $user = Auth::user();
+
+        $requisicoes = $user->requisicoes()
+            ->with('livros')
+            ->latest()
+            ->paginate(3);
+
+        return view('auth.perfil', compact('user', 'requisicoes'));
     }
 
     public function update(Request $request)

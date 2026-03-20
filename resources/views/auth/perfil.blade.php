@@ -118,5 +118,65 @@
                 }
                 reader.readAsDataURL(event.target.files[0]);
             }
+
+             filterLivro = document.getElementById('filter-livro');
+            const filterEstado = document.getElementById('filter-estado');
+            const rows = document.querySelectorAll('tbody tr');
+
+            filterLivro.addEventListener('input', () => filterTable());
+            filterEstado.addEventListener('change', () => filterTable());
+
+            function filterTable() {
+                const livroValue = filterLivro.value.toLowerCase();
+                const estadoValue = filterEstado.value;
+
+                rows.forEach(row => {
+                    const livroText = row.children[1].textContent.toLowerCase();
+                    const estadoText = row.children[2].textContent.toLowerCase();
+
+                    const matchesLivro = livroText.includes(livroValue);
+                    const matchesEstado = estadoValue === '' || estadoText === estadoValue;
+
+                    row.style.display = (matchesLivro && matchesEstado) ? '' : 'none';
+                });
+            }
         </script>
+
+    <div class="mt-8 flex justify-center items-center gap-3">
+        @if($requisicoes->currentPage() > 1)
+            <a href="{{ $requisicoes->url(1) }}" class="px-4 py-2 bg-orange-400 text-white rounded hover:bg-orange-500 transition">
+                &laquo; Primeira
+            </a>
+        @else
+            <span class="px-4 py-2 bg-gray-600 text-white rounded cursor-not-allowed">&laquo; Primeira</span>
+        @endif
+
+        @if($requisicoes->onFirstPage())
+            <span class="px-4 py-2 bg-gray-600 text-white rounded cursor-not-allowed">Anterior</span>
+        @else
+            <a href="{{ $requisicoes->previousPageUrl() }}" class="px-4 py-2 bg-orange-400 text-white rounded hover:bg-orange-500 transition">Anterior</a>
+        @endif
+
+        @foreach(range(1, $requisicoes->lastPage()) as $page)
+            @if($page == $requisicoes->currentPage())
+                <span class="px-4 py-2 bg-orange-600 text-white rounded">{{ $page }}</span>
+            @else
+                <a href="{{ $requisicoes->url($page) }}" class="px-4 py-2 bg-orange-400 text-white rounded hover:bg-orange-500 transition">{{ $page }}</a>
+            @endif
+        @endforeach
+
+        @if($requisicoes->hasMorePages())
+            <a href="{{ $requisicoes->nextPageUrl() }}" class="px-4 py-2 bg-orange-400 text-white rounded hover:bg-orange-500 transition">Próximo</a>
+        @else
+            <span class="px-4 py-2 bg-gray-600 text-white rounded cursor-not-allowed">Próximo</span>
+        @endif
+
+        @if($requisicoes->currentPage() < $requisicoes->lastPage())
+            <a href="{{ $requisicoes->url($requisicoes->lastPage()) }}" class="px-4 py-2 bg-orange-400 text-white rounded hover:bg-orange-500 transition">
+                Última &raquo;
+            </a>
+        @else
+            <span class="px-4 py-2 bg-gray-600 text-white rounded cursor-not-allowed">Última &raquo;</span>
+        @endif
+    </div>
 </x-layout>

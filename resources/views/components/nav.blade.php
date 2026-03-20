@@ -87,6 +87,13 @@
                                     </a>
                                 </li>
 
+                                <li>
+                                    <a href="/admin/reviews">
+                                        Ver Reviews
+                                    </a>
+
+                                </li>
+
                             @endcan
 
                             <li>

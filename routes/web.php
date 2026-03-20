@@ -1,6 +1,8 @@
 <?php
 use App\Exports\LivrosExport;
+use App\Http\Controllers\AlertasDisponibilidadeController;
 use App\Http\Controllers\RequisicaoController;
+use App\Http\Controllers\ReviewController;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\LivroController;
@@ -58,7 +60,7 @@ Route::middleware(['auth', 'verified'])->group(function() {
 
     // Menu de Requisições
     Route::get('/requisicoes', [RequisicaoController::class, 'index'])
-        ->name('requisicoes.index');
+        ->name('livros.requisicoes');
 
     Route::get('/admin/pesquisar', [GoogleBooksController::class, 'index'])->name('admin.pesquisar');
 
@@ -77,7 +79,7 @@ Route::middleware(['auth', 'verified'])->group(function() {
 
     // Confirmar recepção (só admins)
     Route::post('/requisicoes/{requisicao}/confirmar', [RequisicaoController::class, 'confirmar'])
-        ->middleware('role:admin')
+        ->middleware('role:bibliotecario')
         ->name('requisicoes.confirmar');
 
     Route::get('/perfil', function () {
@@ -101,4 +103,22 @@ Route::middleware(['auth', 'verified'])->group(function(){
     Route::post('/perfil/foto',[PerfilController::class,'updatefoto'])
         ->name('perfil.foto');
 
+    Route::get('/admin/reviews', [ReviewController::class,'index'])
+        ->name('admin.reviews')
+        ->middleware('role:bibliotecario');
+
+    Route::get('/admin/reviews/{id}', [ReviewController::class, 'show'])->name('reviews.show');
+    Route::patch('/admin/reviews/{id}', [ReviewController::class, 'update'])->name('reviews.update');
+    Route::post('/admin/reviews', [ReviewController::class,'store'])
+        ->name('reviews.store');
+
+    Route::get('/livros/{requisicao}/review', [ReviewController::class, 'create'])
+        ->name('livros.review');
+
+    Route::delete('admin/reviews/{id}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
+
 });
+
+Route::post('/show-livros', [AlertasDisponibilidadeController::class, 'store'])
+    ->middleware('auth')
+    ->name('alerta.disponibilidade.store');

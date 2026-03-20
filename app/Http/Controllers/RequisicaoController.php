@@ -49,7 +49,7 @@ class RequisicaoController extends Controller
             ->with('livros')
             ->latest()
             ->wherehas('user')
-            ->get();
+            ->paginate(3);
 
         return view('livros.requisicoes', compact('requisicoes'));
     }
@@ -70,7 +70,7 @@ class RequisicaoController extends Controller
         $requisicoes = Requisicao::with('livros', 'user')
             ->latest()
             ->wherehas('user')
-            ->get();
+            ->paginate(3);
 
         $indicadores = [
             'ativas' => Requisicao::where('estado', 'ativa')->count(),
@@ -83,17 +83,39 @@ class RequisicaoController extends Controller
 
     public function devolver($id)
     {
+        // Pega a requisição
         $req = Requisicao::findOrFail($id);
 
+        // Marca como devolvido
         $req->estado = 'devolvido';
         $req->data_entrega_real = now();
         $req->dias_decorridos = $req->data_requisicao->diffInDays(now());
         $req->save();
 
-        $livro = Livro::find($req->livro_id);
+        // Marca o livro como disponível
+        $livro = Livro::findOrFail($req->livro_id);
         $livro->disponivel = true;
         $livro->save();
 
-        return back()->with('success','Livro devolvido com sucesso');
+        // Busca alertas do livro
+        $alertas = \App\Models\AlertasDisponibilidade::where('livro_id', $livro->id)->get();
+
+        // Envia email para cada usuário que clicou no sino
+        foreach ($alertas as $alerta) {
+            if($alerta->user && $alerta->user->email) {
+                \Illuminate\Support\Facades\Mail::raw(
+                    "O livro '{$livro->Nome_livro}' já está disponível para requisição!",
+                    function($message) use ($alerta) {
+                        $message->to($alerta->user->email)
+                            ->subject("Livro Disponível");
+                    }
+                );
+            }
+        }
+
+        // Limpa os alertas do livro
+        \App\Models\AlertasDisponibilidade::where('livro_id', $livro->id)->delete();
+
+        return back()->with('success', 'Livro devolvido com sucesso e usuários notificados!');
     }
 }

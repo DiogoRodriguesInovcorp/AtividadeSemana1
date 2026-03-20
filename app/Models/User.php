@@ -96,5 +96,9 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->requisicoes()
             ->where('estado', 'ativa');
     }
+
+    public function reviews(){
+        return $this->hasMany(Review::class);
+    }
 }
 

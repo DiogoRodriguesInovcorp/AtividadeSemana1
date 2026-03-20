@@ -12,8 +12,7 @@
     </div>
 
     <div class="overflow-x-auto mt-6">
-        <div class="max-h-[500px] overflow-y-auto">
-            <table class="table-auto w-full bg-gray-800 text-white rounded-lg">
+        <table class="table-auto w-full bg-gray-800 text-white rounded-lg overflow-hidden">
                 <thead class="bg-gray-700 text-white uppercase text-xs">
                 <tr>
                     <th class="px-6 py-3">Código do Livro</th>
@@ -25,30 +24,46 @@
                 </tr>
                 </thead>
                 <tbody class="bg-gray-800 divide-y divide-gray-700">
+
                 @foreach($requisicoes as $r)
+
                     <tr>
                         <td class="px-6 py-4">ID: {{ $r->codigo }}</td>
                         <td class="px-6 py-4">{{ $r->livros->Nome_livro}}</td>
                         <td class="px-6 py-4">{{ $r->estado }}</td>
                         <td class="px-6 py-4">{{ $r->data_requisicao->format('d/m/Y') }}</td>
                         <td class="px-6 py-4">{{ $r->data_prevista_entrega->format('d/m/Y') }}</td>
+
                         <td class="px-6 py-4">
+
                             @if($r->estado == 'ativa')
+
                                 <form method="POST" action="{{ url('/requisicoes/'.$r->id.'/devolver') }}">
                                     @csrf
                                     <button class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded">
                                         Fazer Devolução
                                     </button>
                                 </form>
+
+                            @elseif($r->estado == 'devolvido' && !$r->review)
+
+                                <a href="{{ route('livros.review', $r->id) }}"
+                                   class="bg-green-500 px-3 py-1 rounded whitespace-nowrap">
+                                    Fazer Review
+                                </a>
+
                             @else
+
                                 <span class="text-gray-400">Devolvido</span>
+
                             @endif
+
                         </td>
                     </tr>
+
                 @endforeach
                 </tbody>
             </table>
-        </div>
     </div>
 
     <script>
@@ -74,5 +89,43 @@
             });
         }
     </script>
+
+    <div class="mt-8 flex justify-center items-center gap-3">
+        @if($requisicoes->currentPage() > 1)
+            <a href="{{ $requisicoes->url(1) }}" class="px-4 py-2 bg-orange-400 text-white rounded hover:bg-orange-500 transition">
+                &laquo; Primeira
+            </a>
+        @else
+            <span class="px-4 py-2 bg-gray-600 text-white rounded cursor-not-allowed">&laquo; Primeira</span>
+        @endif
+
+        @if($requisicoes->onFirstPage())
+            <span class="px-4 py-2 bg-gray-600 text-white rounded cursor-not-allowed">Anterior</span>
+        @else
+            <a href="{{ $requisicoes->previousPageUrl() }}" class="px-4 py-2 bg-orange-400 text-white rounded hover:bg-orange-500 transition">Anterior</a>
+        @endif
+
+        @foreach(range(1, $requisicoes->lastPage()) as $page)
+            @if($page == $requisicoes->currentPage())
+                <span class="px-4 py-2 bg-orange-600 text-white rounded">{{ $page }}</span>
+            @else
+                <a href="{{ $requisicoes->url($page) }}" class="px-4 py-2 bg-orange-400 text-white rounded hover:bg-orange-500 transition">{{ $page }}</a>
+            @endif
+        @endforeach
+
+        @if($requisicoes->hasMorePages())
+            <a href="{{ $requisicoes->nextPageUrl() }}" class="px-4 py-2 bg-orange-400 text-white rounded hover:bg-orange-500 transition">Próximo</a>
+        @else
+            <span class="px-4 py-2 bg-gray-600 text-white rounded cursor-not-allowed">Próximo</span>
+        @endif
+
+        @if($requisicoes->currentPage() < $requisicoes->lastPage())
+            <a href="{{ $requisicoes->url($requisicoes->lastPage()) }}" class="px-4 py-2 bg-orange-400 text-white rounded hover:bg-orange-500 transition">
+                Última &raquo;
+            </a>
+        @else
+            <span class="px-4 py-2 bg-gray-600 text-white rounded cursor-not-allowed">Última &raquo;</span>
+        @endif
+    </div>
 
 </x-layout>

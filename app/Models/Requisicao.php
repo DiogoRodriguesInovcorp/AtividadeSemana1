@@ -40,4 +40,9 @@ class Requisicao extends Model
     {
         return $this->belongsTo(Livro::class, 'livro_id');
     }
+
+    public function review()
+    {
+        return $this->hasOne(Review::class);
+    }
 }

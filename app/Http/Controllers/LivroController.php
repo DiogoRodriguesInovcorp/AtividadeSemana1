@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 
+use App\Models\AlertasDisponibilidade;
 use App\Models\Autores;
 use App\Models\Editoras;
 use App\Models\Livro;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class LivroController extends Controller
 {
@@ -83,13 +85,27 @@ class LivroController extends Controller
     {
         $livro->load('autores', 'editoras');
 
-        $historico = $livro->requisicoes()
+        $reviews = $livro->reviews()
+            ->where('estado','ativo')
             ->with('user')
-            ->wherehas('user')
-            ->latest()
             ->get();
 
-        return view('livros.show-livros', compact('livro', 'historico'));
+        $historico = $livro->requisicoes()
+            ->with('user')
+            ->whereHas('user')
+            ->latest()
+            ->paginate(3);
+
+        $autorIds = $livro->autores->pluck('id')->toArray();
+
+        $livrosRelacionados = \App\Models\Livro::where('id', '!=', $livro->id)
+            ->whereHas('autores', function($query) use ($autorIds) {
+                $query->whereIn('autores.id', $autorIds);
+            })
+            ->with('autores', 'editoras')
+            ->get();
+
+        return view('livros.show-livros', compact('livro', 'reviews', 'historico', 'livrosRelacionados'));
     }
 
     public function showautores(Autores $autor)
@@ -111,5 +127,25 @@ class LivroController extends Controller
         Auth::logout();
 
         return redirect('/index');
+    }
+
+    public function marcarDisponivel(Livro $livro)
+    {
+        $livro->update(['disponivel' => true]);
+
+        // Pega todos os alertas desse livro
+        $alertas = AlertasDisponibilidade::where('livro_id', $livro->id)->get();
+
+        foreach($alertas as $alerta) {
+            Mail::raw("O livro '{$livro->Nome_livro}' já está disponível! Corra para requisitar!", function($message) use ($alerta) {
+                $message->to($alerta->user->email)
+                    ->subject('Livro Disponível');
+            });
+        }
+
+        // Limpa os alertas do banco
+        AlertasDisponibilidade::where('livro_id', $livro->id)->delete();
+
+        return back()->with('success', 'Livro marcado como disponível e usuários notificados!');
     }
 }

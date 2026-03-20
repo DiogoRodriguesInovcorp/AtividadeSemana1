@@ -43,4 +43,9 @@ class Livro extends Model
             ->where('estado', 'ativa')
             ->exists();
     }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
 }
