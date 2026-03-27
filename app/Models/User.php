@@ -100,5 +100,15 @@ class User extends Authenticatable implements MustVerifyEmail
     public function reviews(){
         return $this->hasMany(Review::class);
     }
+
+    public function encomendas()
+    {
+        return $this->hasMany(Encomenda::class);
+    }
+
+    public function carrinho()
+    {
+        return $this->hasOne(Carrinho::class);
+    }
 }
 

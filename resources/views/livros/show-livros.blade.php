@@ -1,4 +1,20 @@
 <x-layout>
+    <div id="alert" class="fixed top-5 right-5 bg-green-600 text-white px-6 py-3 rounded-xl shadow-lg z-50 opacity-0 translate-y-2 transition-all duration-500">
+    {{ session('success') }}
+    </div>
+
+    <script>
+        const alert = document.getElementById('alert');
+        if(alert){
+            setTimeout(() => {
+                alert.classList.remove('opacity-0','translate-y-2');
+            }, 100);
+
+            setTimeout(() => {
+                alert.classList.add('opacity-0','translate-y-2');
+            }, 3000);
+        }
+    </script>
 
     <div class="max-w-6xl mx-auto flex gap-10 mt-10">
 
@@ -58,6 +74,13 @@
             Ver Autores
         </a>
         ­
+        <form action="{{ route('carrinho.add', $livro->id) }}" method="POST" class="inline-block ml-2">
+             @csrf
+             <button class="px-6 py-3 bg-yellow-500 text-white rounded-xl shadow hover:bg-yellow-600">
+                Adicionar ao Carrinho
+            </button>
+        </form>
+
         @auth
             @if(auth()->user()->isAdmin())
                 <form action="{{ route('livros.destroy', $livro) }}" method="POST"
@@ -80,8 +103,8 @@
                     <button type="submit" class="px-6 py-3 bg-green-700 text-white rounded-xl shadow hover:bg-green-800">
                         Requisitar Livro
                     </button>
-
                 </form>
+
                 @if(session('error'))
                 <div class="text-red-500 font-bold mt-6">
                     {{ session('error') }}

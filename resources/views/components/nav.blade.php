@@ -61,11 +61,23 @@
                                 <a href="/requisicoes">As Minhas Requisições</a>
                             </li>
 
+                            <li>
+                                <a href="/Pagamento_livros/carrinho">
+                                     Ver Carrinho
+                                </a>
+                            </li>
+
                             @can('Admin_ver')
 
                                 <li>
                                     <a href="/requisicoes-todas">
                                         Todas as Requisições
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="/admin/encomendas">
+                                        Gerir Encomendas
                                     </a>
                                 </li>
 

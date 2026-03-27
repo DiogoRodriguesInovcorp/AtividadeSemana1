@@ -9,6 +9,8 @@ use App\Http\Controllers\LivroController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PerfilController;
 use App\Http\Controllers\GoogleBooksController;
+use App\Http\Controllers\CarrinhoController;
+use App\Http\Controllers\CheckoutController;
 
 Route::get('/index', [LivroController::class, 'index']);
 Route::get('/escolher-login', function () {
@@ -120,5 +122,24 @@ Route::middleware(['auth', 'verified'])->group(function(){
 });
 
 Route::post('/show-livros', [AlertasDisponibilidadeController::class, 'store'])
-    ->middleware('auth')
+    ->middleware(['auth', 'verified'])
     ->name('alerta.disponibilidade.store');
+
+    Route::middleware('auth')->group(function () {
+
+    Route::get('/Pagamento_livros/carrinho', [CarrinhoController::class, 'index'])->name('carrinho.index');
+
+    Route::post('/Pagamento_livros/carrinho/adicionar/{livro}', [CarrinhoController::class, 'adicionar'])->name('carrinho.add');
+
+    Route::delete('/Pagamento_livros/carrinho/remover/{id}', [CarrinhoController::class, 'remover'])->name('carrinho.remove');
+
+    Route::get('/Pagamento_livros/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+    Route::post('/Pagamento_livros/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+    Route::get('/Pagamento_livros/checkout/pagamento/{id}', [CheckoutController::class, 'pagamento'])->name('checkout.pagamento');
+    Route::get('/Pagamento_livros/checkout/success', [CheckoutController::class, 'success'])->name('checkout.success');
+    Route::get('/Pagamento_livros/checkout/cancel', [CheckoutController::class, 'cancel'])->name('checkout.cancel');
+});
+
+Route::get('/admin/encomendas', [CheckoutController::class, 'encomendas'])
+    ->middleware('role:bibliotecario')
+    ->name('admin.encomendas');
