@@ -23,6 +23,12 @@ class ReviewController extends Controller
             'rating' => $request->rating,
         ]);
 
+        logAction(
+            'Reviews',
+            $review->id,
+            'Criou uma review'
+        );
+
         $bibliotecarios = User::where('role', 'bibliotecario')->get();
 
         foreach ($bibliotecarios as $bibliotecario) {
@@ -68,6 +74,12 @@ class ReviewController extends Controller
             'estado' => $request->estado,
             'justificacao' => $request->justificacao
         ]);
+
+        logAction(
+            'Reviews',
+            $review->id,
+            'Alterou estado para: '.$request->estado
+        );
 
         // EMAIL USER
         Mail::raw(

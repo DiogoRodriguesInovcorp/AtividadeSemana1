@@ -10,9 +10,10 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
-    {
-        DB::statement('ALTER TABLE carrinhos ADD COLUMN user_id INTEGER');
+    public function up(): void {
+        if (!Schema::hasColumn('carrinhos', 'user_id')) {
+            DB::statement('ALTER TABLE carrinhos ADD COLUMN user_id INTEGER');
+        }
     }
 
     public function down(): void

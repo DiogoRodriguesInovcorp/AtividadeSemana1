@@ -4,9 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Livro extends Model
 {
+    use HasFactory;
+
     protected $attributes = [
 
     ];
@@ -39,9 +42,7 @@ class Livro extends Model
 
     public function estaDisponivel()
     {
-        return !$this->requisicoes()
-            ->where('estado', 'ativa')
-            ->exists();
+        return $this->disponivel > 0;
     }
 
     public function reviews()

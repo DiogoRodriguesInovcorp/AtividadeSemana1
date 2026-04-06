@@ -28,6 +28,12 @@ class CarrinhoController extends Controller
             ]);
         }
 
+        logAction(
+            'Carrinho',
+            $item->id,
+            'Adicionou item ao carrinho'
+        );
+
         return back()->with('success', 'Livro adicionado ao carrinho');
     }
 
@@ -46,5 +52,11 @@ class CarrinhoController extends Controller
     {
         CarrinhoItem::findOrFail($id)->delete();
         return back();
+
+        logAction(
+            'Carrinho',
+            $item->id,
+            'Removeu item do carrinho'
+        );
     }
 }

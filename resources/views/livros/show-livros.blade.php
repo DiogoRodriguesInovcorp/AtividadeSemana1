@@ -63,96 +63,87 @@
         </div>
 
     </div>
-    <div class="mt-8">
+    <div class="mt-8 flex flex-wrap gap-3 mb-6 items-center">
+
         <a href="/livros"
-           class="px-6 py-3 bg-orange-400 text-white rounded-xl shadow hover:bg-orange-500 transition">
+        class="px-6 py-3 bg-orange-400 text-white rounded-xl shadow hover:bg-orange-500 transition">
             Ver Livros
         </a>
-        ­
+
         <a href="/autores"
-           class="px-6 py-3 bg-orange-500 text-white rounded-xl shadow hover:bg-orange-400 transition">
+        class="px-6 py-3 bg-orange-500 text-white rounded-xl shadow hover:bg-orange-400 transition">
             Ver Autores
         </a>
-        ­
-        <form action="{{ route('carrinho.add', $livro->id) }}" method="POST" class="inline-block ml-2">
-             @csrf
-             <button class="px-6 py-3 bg-yellow-500 text-white rounded-xl shadow hover:bg-yellow-600">
+
+        <form action="{{ route('carrinho.add', $livro->id) }}" method="POST">
+            @csrf
+            <button class="px-6 py-3 bg-yellow-500 text-white rounded-xl shadow hover:bg-yellow-600">
                 Adicionar ao Carrinho
             </button>
         </form>
 
+        @if($livro->estaDisponivel())
+
+            <form action="{{ route('requisicoes.store', $livro) }}" method="POST">
+                @csrf
+                <button class="px-6 py-3 bg-green-700 text-white rounded-xl shadow hover:bg-green-800">
+                    Requisitar Livro
+                </button>
+            </form>
+
+        @else
+
+            <span class="bg-gray-600 text-white px-6 py-3 rounded-xl shadow">
+                Livro indisponível
+            </span>
+
+            @php
+                $jaNotificado = \App\Models\AlertasDisponibilidade::where('user_id', auth()->id())
+                                ->where('livro_id', $livro->id)
+                                ->exists();
+            @endphp
+
+            <form method="POST" action="{{ route('alerta.disponibilidade.store') }}">
+                @csrf
+                <input type="hidden" name="livro_id" value="{{ $livro->id }}">
+
+                <button type="submit"
+                    @if($jaNotificado) disabled @endif
+                    class="px-6 py-3 rounded-xl text-white shadow
+                    @if($jaNotificado)
+                        bg-gray-600 cursor-not-allowed
+                    @else
+                        bg-green-800 hover:bg-yellow-400
+                    @endif">
+                    🔔 Notificar-me
+                </button>
+            </form>
+
+        @endif
+
         @auth
             @if(auth()->user()->isAdmin())
                 <form action="{{ route('livros.destroy', $livro) }}" method="POST"
-                      class="inline-block"
-                      onsubmit="return confirm('Tens a certeza que queres retirar este livro?')">
+                    onsubmit="return confirm('Tens a certeza que queres retirar este livro?')">
                     @csrf
                     @method('DELETE')
 
-                    <button class="bg-red-600 hover:bg-red-800 text-white px-6 py-3  rounded-xl shadow transition">
+                    <button class="px-6 py-3 bg-red-600 hover:bg-red-800 text-white rounded-xl shadow transition">
                         Retirar Livro
                     </button>
-
                 </form>
             @endif
+            <script>
+                function confirmarNotificacao() {
+                    alert('Obrigado! Você receberá um email quando o livro estiver disponível.');
+                    return true; // Continua com o envio do formulário
+                }
+            </script>
         @endauth
-            @if($livro->estaDisponivel())
-                <form action="{{ route('requisicoes.store', $livro) }}" method="POST"
-                      class="inline-block">
-                    @csrf
-                    <button type="submit" class="px-6 py-3 bg-green-700 text-white rounded-xl shadow hover:bg-green-800">
-                        Requisitar Livro
-                    </button>
-                </form>
-
-                @if(session('error'))
-                <div class="text-red-500 font-bold mt-6">
-                    {{ session('error') }}
-                </div>
-                @endif
-            @else(!$livro->disponivel)
-                <div class="flex items-center gap-4 mt-4">
-                <span class="bg-gray-600 text-white px-6 py-3 cursor-not-allowed rounded-xl shadow transition">
-                    Livro indisponível
-                </span>
-                    @php
-                        $jaNotificado = \App\Models\AlertasDisponibilidade::where('user_id', auth()->id())
-                                        ->where('livro_id', $livro->id)
-                                        ->exists();
-                    @endphp
-
-                    <form method="POST" action="{{ route('alerta.disponibilidade.store') }}" onsubmit="return confirmarNotificacao()">
-                        @csrf
-                        <input type="hidden" name="livro_id" value="{{ $livro->id }}">
-
-                        <button type="submit"
-                                @if($jaNotificado) disabled @endif
-                                class="py-2 px-6 flex items-center justify-center rounded-xl
-                               @if($jaNotificado)
-                                   bg-gray-600 cursor-not-allowed
-                               @else
-                                   bg-green-800 hover:bg-yellow-400
-                               @endif
-                               text-white shadow-md transition duration-300">
-                            🔔 Notificar-me
-                        </button>
-                    </form>
-                    @if($jaNotificado)
-                        <p class="text-gray-300 mt-2 text-sm">Você já solicitou notificação para este livro.</p>
-                    @endif
-
-                    <script>
-                        function confirmarNotificacao() {
-                            alert('Obrigado! Você receberá um email quando o livro estiver disponível.');
-                            return true; // Continua com o envio do formulário
-                        }
-                    </script>
-                </div>
-            @endif
     </div>
 
     @if($livrosRelacionados->count())
-        <h2 class="text-3xl font-bold mt-12 mb-6">Livros Relacionados</h2>
+        <h2 class="text-3xl font-bold mb-6">Livros Relacionados</h2>
 
         <div class="relative">
 
@@ -187,7 +178,7 @@
     @endif
 
     <div>
-        <h2 class="text-3xl font-bold mb-6">Reviews</h2>
+        <h2 class="text-3xl py-8 font-bold mb-4">Reviews</h2>
         <div class="space-y-4">
             @forelse($reviews as $review)
                 <div class="bg-gray-800 p-4 rounded-xl shadow transition">

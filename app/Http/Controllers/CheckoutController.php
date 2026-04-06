@@ -56,6 +56,12 @@ class CheckoutController extends Controller
             'estado' => 'pendente',
         ]);
 
+        logAction(
+            'Encomendas',
+            $encomenda->id,
+            'Criou encomenda'
+        );
+
         // foreach ($items as $item) {
         //\App\Models\EncomendaItem::create([
         //    'encomenda_id' => $encomenda->id,

@@ -11,11 +11,13 @@ return new class extends Migration
     {
         // 1. Criar tabela nova correta
         Schema::create('carrinho_items_new', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('carrinho_id');
-            $table->unsignedBigInteger('livro_id');
-            $table->integer('quantidade')->default(1);
-            $table->timestamps();
+            if (!Schema::hasColumn('carrinho_items_new', 'carrinho_id','livro_id','quantidade')) {
+                $table->id();
+                $table->unsignedBigInteger('carrinho_id');
+                $table->unsignedBigInteger('livro_id');
+                $table->integer('quantidade')->default(1);
+                $table->timestamps();
+            }
         });
 
         // 2. Copiar dados antigos (se existirem)

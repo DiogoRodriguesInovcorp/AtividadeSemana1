@@ -13,17 +13,25 @@ class RequisicaoController extends Controller
 {
     public function store(Livro $livro)
     {
+
+        $request = request();
+
+        $request->validate([
+            'livro_id' => 'required|exists:livros,id'
+        ]);
+        $livro = Livro::findOrFail($request->livro_id);
+
         $user = auth()->user();
 
-        if (!$livro->estaDisponivel()) {
-            return back()->withErrors('Livro indisponível.');
+        if ($livro->disponivel <= 0) {
+            return back()->withErrors(['livro_id' => 'Livro indisponível.']);
         }
 
         if ($user->requisicoes()->where('estado','ativa')->count() >= 3) {
             return back()->with('error', 'Já atingiu o número máximo de livros que pode requisitar.');
         }
 
-        $livro->disponivel = false;
+        $livro->disponivel -= 1;
         $livro->save();
 
         $requisicao = Requisicao::create([
@@ -34,6 +42,12 @@ class RequisicaoController extends Controller
             'data_prevista_entrega' => now()->addDays(5),
             'codigo' => (int) Requisicao::max('codigo') + 1,
         ]);
+
+        logAction(
+            'Requisições',
+            $requisicao->id,
+            'Criou uma requisição'
+        );
 
         Mail::to($user->email)->send(new RequisicaoCriada($requisicao));
         Mail::to('rodriguesdidi25@gmail.com')->send(new RequisicaoCriada($requisicao));
@@ -92,9 +106,15 @@ class RequisicaoController extends Controller
         $req->dias_decorridos = $req->data_requisicao->diffInDays(now());
         $req->save();
 
+        logAction(
+            'Requisições',
+            $req->id,
+            'Devolveu um livro'
+        );
+
         // Marca o livro como disponível
         $livro = Livro::findOrFail($req->livro_id);
-        $livro->disponivel = true;
+        $livro->disponivel += 1;
         $livro->save();
 
         // Busca alertas do livro

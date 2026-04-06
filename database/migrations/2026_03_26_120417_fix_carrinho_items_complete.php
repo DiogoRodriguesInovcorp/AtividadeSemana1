@@ -13,9 +13,15 @@ return new class extends Migration
     public function up(): void
     {
         // SQLite workaround → usar SQL direto
-        DB::statement('ALTER TABLE carrinho_items ADD COLUMN carrinho_id INTEGER');
-        DB::statement('ALTER TABLE carrinho_items ADD COLUMN livro_id INTEGER');
-        DB::statement('ALTER TABLE carrinho_items ADD COLUMN quantidade INTEGER DEFAULT 1');
+        if (!Schema::hasColumn('carrinho_items', 'carrinho_id')) {
+            DB::statement('ALTER TABLE carrinho_items ADD COLUMN carrinho_id INTEGER');
+        }
+        if (!Schema::hasColumn('carrinho_items', 'livro_id')) {
+            DB::statement('ALTER TABLE carrinho_items ADD COLUMN livro_id INTEGER');
+        }
+        if (!Schema::hasColumn('carrinho_items', 'quantidade')) {
+            DB::statement('ALTER TABLE carrinho_items ADD COLUMN quantidade INTEGER DEFAULT 1');
+        }
     }
 
     public function down(): void

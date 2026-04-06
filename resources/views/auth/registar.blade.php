@@ -14,8 +14,9 @@
             </div>
         @endif
 
-        <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4 mx-auto">
-            <legend class="fieldset-legend">Registar</legend>
+        <h1 class="text-3xl font-bold text-center mt-30">Registar</h1>
+
+        <fieldset class="fieldset bg-base-200 border-base-300 mt-10 rounded-box w-xs border p-4 mx-auto">
 
             <label class="label" for="name">Nome</label>
             <input class="input text-white" name="name" placeholder="O teu nome" required />

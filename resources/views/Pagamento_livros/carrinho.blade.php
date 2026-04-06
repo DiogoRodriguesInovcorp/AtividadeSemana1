@@ -37,7 +37,7 @@
                             @csrf
                             @method('DELETE')
 
-                            <button class="bg-red-500 px-2 py-1 rounded">
+                            <button class="bg-red-500 px-2 mb-2 py-1 rounded">
                                 Remover
                             </button>
                         </form>

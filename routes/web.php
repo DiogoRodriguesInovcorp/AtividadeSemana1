@@ -61,8 +61,9 @@ Route::middleware(['auth', 'verified', 'role:bibliotecario'])->group(function ()
 Route::middleware(['auth', 'verified'])->group(function() {
 
     // Menu de Requisições
-    Route::get('/requisicoes', [RequisicaoController::class, 'index'])
-        ->name('livros.requisicoes');
+    Route::get('/requisicoes', [RequisicaoController::class, 'index'])->name('livros.requisicoes');
+
+    Route::post('/requisicoes', [RequisicaoController::class, 'store'])->name('requisicoes.store');
 
     Route::get('/admin/pesquisar', [GoogleBooksController::class, 'index'])->name('admin.pesquisar');
 
