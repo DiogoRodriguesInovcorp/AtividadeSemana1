@@ -11,6 +11,9 @@ use App\Http\Controllers\PerfilController;
 use App\Http\Controllers\GoogleBooksController;
 use App\Http\Controllers\CarrinhoController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\SalaController;
+use App\Http\Controllers\MensagemController;
+use App\Http\Controllers\ConviteController;
 
 Route::get('/index', [LivroController::class, 'index']);
 Route::get('/escolher-login', function () {
@@ -120,6 +123,11 @@ Route::middleware(['auth', 'verified'])->group(function(){
 
     Route::delete('admin/reviews/{id}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
 
+    Route::post('/mensagens', [MensagemController::class, 'store'])->name('mensagens.store');
+    Route::resource('salas', SalaController::class);
+    Route::post('/convites/{id}/aceitar', [ConviteController::class, 'aceitar'])->name('convites.aceitar');
+    Route::post('/convites/{id}/recusar', [ConviteController::class, 'recusar'])->name('convites.recusar');
+    Route::post('/salas/{sala}/convidar', [SalaController::class, 'convidar'])->name('salas.convidar');
 });
 
 Route::post('/show-livros', [AlertasDisponibilidadeController::class, 'store'])

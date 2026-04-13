@@ -110,5 +110,20 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(Carrinho::class);
     }
+
+    public function salas()
+    {
+        return $this->belongsToMany(Sala::class);
+    }
+
+    public function mensagens()
+    {
+        return $this->hasMany(Mensagem::class);
+    }
+
+    public function convites()
+    {
+        return $this->hasMany(SalaConvite::class);
+    }
 }
 
